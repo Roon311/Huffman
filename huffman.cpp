@@ -31,12 +31,14 @@ public:
 	//To print the huffman code
 	void  Huffman_print(Huffman* h_array)
 	{
+		//print the character and its huffman code for visualization
 		for (int i = 0; i < 26; i++) {
 			cout << h_array[i].c << "----->" << h_array[i].h << endl;
 		}
 	}
 	void  Huffman_check_sort(Huffman* h_array)
 	{
+		//print the character and its frequency to check that the sort is successful
 		for (int i = 0; i < 26; i++) {
 			cout << h_array[i].c << "----->" << h_array[i].p << endl;
 		}
@@ -75,10 +77,10 @@ public:
 		//takes the last element in the vector(The one added) and places it in position 
 		Huffman temp = operations.back();
 		operations.pop_back();
-		cout << "operation size: " << operations.size() << endl;
+		//cout << "operation size: " << operations.size() << endl;		//debugging
 		for (int i = operations.size() - 1; i >= 0; i--)
 		{
-			cout << i << endl;
+			//cout << i << endl;			//debugging
 			if (operations.at(i).p < temp.p)
 			{
 				counter++;
@@ -104,8 +106,6 @@ public:
 	}
 	Huffman* Create_Huffman(vector <Huffman> operations, Huffman* h_array)
 	{
-		//  a		b		c		  d		      e
-		// 0.25	  0.125    0.125    0.125		0.1257
 		int cursor = 0; // cursor that would be used during looping
 
 		if (counter != 25)
@@ -168,6 +168,15 @@ Huffman* sort_func(Huffman* h_array)
 // 
 void main()
 {
+	/// <summary>
+	/// the frequency was obtained from https://pi.math.cornell.edu/~mec/2003-2004/cryptography/subs/frequencies.html
+	/// 1.Create the arrays.
+	/// 2.Create array of objects to encapsulate the data.
+	/// 3.sort the array once before working on it.
+	/// 4.Create vector of huffman objects to work on.
+	/// 5.Call the function Create_Huffman which is responsible for creating the huffman code, this function calls several functions
+	/// 6.print the huffman character and its encoding
+	/// </summary>
 	string c_array[26] = { "A","B","C","D","E","F","G","H","I","J" ,"K","L","M" ,"N","O","P" ,"Q","R","S" ,"T","U","V" ,"W","X","Y","Z" };
 	double f_array[26] = { 8.12,1.49,2.71,4.32,12.02,2.30,2.03,5.92,7.31,0.10,0.69,3.98,2.61,6.95,7.68,1.82,0.11,6.02,6.28,9.10,2.88,1.11,2.09,0.17,2.11,0.07 };
 	Huffman h_array[26];//array of huffman objects
@@ -178,7 +187,11 @@ void main()
 	//up to this step we have an array of huffman objects which carry the character, the probability of the character, and the  huffman string.
 	//we need to sort the array once before beginning and setting the order
 	sort_func(h_array);
+	//---------------------------------Debugging------------------------------------//
+
 	h_array->Huffman_check_sort(h_array); // check that the array was sorted correctly for debugging
+
+	//------------------------------------------------------------------------------//
 	vector<Huffman> operations;
 	for (int i = 0; i < 26; i++)
 	{
