@@ -1,0 +1,10 @@
+
+*.db-shm
+*.db
+*.db-wal
+*.sqlite
+*.db
+*.opendb
+.vs/Huffman/v16/Browse.VC.db
+*.ipch
+*.sqlite
