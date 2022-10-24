@@ -6,6 +6,8 @@
 #include<iostream>
 #include <vector>
 #include <stack>
+#include <fstream>
+#include <string>
 using namespace std;
 static int counter = 0;
 
@@ -14,7 +16,7 @@ class Huffman
 public:
 	string c;//The character
 	string h;//Its huffman code
-	double p;
+	double p;// The frequency of the character
 	//int order;// tracer token for tracing with probability
 	//Default constructor
 	Huffman()
@@ -106,7 +108,6 @@ public:
 	}
 	Huffman* Create_Huffman(vector <Huffman> operations, Huffman* h_array)
 	{
-		int cursor = 0; // cursor that would be used during looping
 
 		if (counter != 25)
 		{
@@ -166,6 +167,102 @@ Huffman* sort_func(Huffman* h_array)
 	return h_array;
 }
 // 
+Huffman* Huffman_main(Huffman* h_array)
+{
+	sort_func(h_array);//sort once for the first time
+	h_array->Huffman_check_sort(h_array);
+	//---------------------------------Debugging------------------------------------//
+
+	//h_array->Huffman_check_sort(h_array); // check that the array was sorted correctly for debugging
+
+	//------------------------------------------------------------------------------//
+	vector<Huffman> operations;
+	for (int i = 0; i < 26; i++)
+	{
+		operations.push_back(h_array[i]);
+	}
+	counter = 0;
+	h_array->Create_Huffman(operations, h_array);// This takes each huffman object and fills its huffman code
+	//Print huffman codes
+	h_array->Huffman_print(h_array);
+	return h_array;
+}
+string Get_File_Content(string name)
+{
+	fstream my_file;
+	string file_content="";
+	my_file.open(name+".txt", ios::in);
+	if (!my_file)
+	{
+		cout << "File not created!"<<endl;
+	}
+	else
+	{
+		cout << "File created successfully!"<<endl;
+		my_file >> file_content;
+		my_file.close();
+	}	
+	return file_content;
+}
+void Save_File_Content(string name,string huffman)
+{
+	fstream my_file;
+	my_file.open(name+".txt", ios::out);
+	if (!my_file)
+	{
+		cout << "File not created!"<<endl;
+	}
+	else
+	{
+		cout << "File created successfully!"<<endl;
+		my_file << huffman;
+		my_file.close();
+	}
+}
+double* Frequency_file_former(string name,double* f_array_2)
+{
+	string content;
+	content = Get_File_Content(name);
+	string s;
+	int counter_freq = 65; //ASCII for letter A
+	int temp_counter=0;
+	//double freq[26];
+	while (counter_freq <= 90)
+	{
+		for (int i = 0; i < content.length(); i++)
+		{
+			//s.push_back(content[i]);
+			if (content[i] == counter_freq)
+			{
+				temp_counter++;
+			}
+		}
+		f_array_2[counter_freq - 65] = temp_counter;
+		temp_counter = 0;
+		counter_freq++;
+	}
+	return f_array_2;
+}
+double Frequency_Sum_Creator(Huffman* h_array)
+{
+	double sum = 0;
+	for (int i = 0; i < 26; i++)
+	{
+		sum += h_array[i].p;
+	}
+	return sum;
+}
+double Average_Calc(Huffman* h_array)
+{
+	double avg = 0;
+	double freq_sum = Frequency_Sum_Creator(h_array);
+	for (int i = 0; i < 26; i++)
+	{
+		avg += h_array[i].h.length()* h_array[i].p/ freq_sum;
+	}
+	cout << "The average length is: " <<avg<<endl;
+	return avg;
+}
 void main()
 {
 	/// <summary>
@@ -186,18 +283,44 @@ void main()
 	}
 	//up to this step we have an array of huffman objects which carry the character, the probability of the character, and the  huffman string.
 	//we need to sort the array once before beginning and setting the order
-	sort_func(h_array);
-	//---------------------------------Debugging------------------------------------//
-
-	h_array->Huffman_check_sort(h_array); // check that the array was sorted correctly for debugging
-
-	//------------------------------------------------------------------------------//
-	vector<Huffman> operations;
-	for (int i = 0; i < 26; i++)
+	Huffman_main(h_array);
+	//Task 2 Encoding a text file into huffman code
+	
+	string name;
+	//cout << "Enter your file name: "; cin >> name;
+	cout << "Enter your file name: "; cin >> name;
+	string content =Get_File_Content(name);
+	//cout << content;
+	string huffman = "";
+	string s;
+	for (int i = 0; i < content.length(); i++)
 	{
-		operations.push_back(h_array[i]);
+		s.push_back(content[i]);
+		for (int j = 0; j <26; j++)
+		{
+			if (s == h_array[j].c)
+			{	
+				huffman = huffman + h_array[j].h;
+				break;
+			}
+		}
+		s.pop_back();
 	}
-	h_array->Create_Huffman(operations, h_array);// This takes each huffman object and fills its huffman code
-	//Print huffman codes
-	h_array->Huffman_print(h_array);
+	cout <<"The huffman representation of the file is:"<<endl<<huffman<<endl;
+	cout << "Enter your file name you would like to save to: "; cin >> name;
+	Save_File_Content(name, huffman);
+	//Task 3 
+	cout << "Enter the file name you would like to gather the frequency from: "; cin >> name;
+	double* f_array_2 = new double[26];
+	f_array_2=Frequency_file_former(name, f_array_2);
+	Huffman h_array_2[26];
+	cout << f_array_2[1];
+		for (int i = 0; i < 26; i++)
+	{
+		h_array_2[i] = Huffman(c_array[i], f_array_2[i]);
+	}
+	h_array_2->Huffman_check_sort(h_array_2);
+	Huffman_main(h_array_2);
+	Average_Calc(h_array);
+	Average_Calc(h_array_2);
 }
