@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Debug",
+    "\\Resources"
   ],
   "SelectedNode": "\\huffman.cpp",
   "PreviewInSolutionExplorer": false

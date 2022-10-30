@@ -148,7 +148,7 @@ public:
 Huffman* sort_func(Huffman* h_array)
 {
 	// To sort the array for the first time before beginning the process
-	Huffman temp, temp_1, temp_2;
+	Huffman temp;
 	for (int i = 0; i < 26; i++)
 	{
 		for (int j = i + 1; j < 26; j++)
@@ -158,15 +158,13 @@ Huffman* sort_func(Huffman* h_array)
 				temp = h_array[i];
 				h_array[i] = h_array[j];
 				h_array[j] = temp;
-				//h_array[i].order = i;// you did not debug this yet
-				//h_array[j].order = j;// you did not debug this yet
 			}
 		}
 	}
 
 	return h_array;
 }
-// 
+ 
 Huffman* Huffman_main(Huffman* h_array)
 {
 	sort_func(h_array);//sort once for the first time
@@ -275,7 +273,7 @@ void main()
 	/// 6.print the huffman character and its encoding
 	/// </summary>
 	string c_array[26] = { "A","B","C","D","E","F","G","H","I","J" ,"K","L","M" ,"N","O","P" ,"Q","R","S" ,"T","U","V" ,"W","X","Y","Z" };
-	double f_array[26] = { 8.12,1.49,2.71,4.32,12.02,2.30,2.03,5.92,7.31,0.10,0.69,3.98,2.61,6.95,7.68,1.82,0.11,6.02,6.28,9.10,2.88,1.11,2.09,0.17,2.11,0.07 };
+	double f_array[26] = { 8.12,1.49,2.71,4.32,12.02,2.30,2.03,5.92,7.31,0.10,0.69,3.98,2.61,6.95,7.68,1.82,0.11,6.02,6.28,9.10,2.88,1.11,2.09,0.17,2.11,0.07};
 	Huffman h_array[26];//array of huffman objects
 	for (int i = 0; i < 26; i++)
 	{
@@ -293,6 +291,7 @@ void main()
 	//cout << content;
 	string huffman = "";
 	string s;
+	int huffman_size = 0;
 	for (int i = 0; i < content.length(); i++)
 	{
 		s.push_back(content[i]);
@@ -306,9 +305,16 @@ void main()
 		}
 		s.pop_back();
 	}
-	cout <<"The huffman representation of the file is:"<<endl<<huffman<<endl;
 	cout << "Enter your file name you would like to save to: "; cin >> name;
+	cout <<"The huffman representation of the file is:"<<endl<<huffman<<endl;
 	Save_File_Content(name, huffman);
+	while (!huffman.empty())
+	{
+		huffman.pop_back();
+		huffman_size++;
+	}
+	//cout << "The bit sequence length is:" << huffman_size << endl;
+
 	//Task 3 
 	cout << "Enter the file name you would like to gather the frequency from: "; cin >> name;
 	double* f_array_2 = new double[26];
@@ -321,6 +327,58 @@ void main()
 	}
 	h_array_2->Huffman_check_sort(h_array_2);
 	Huffman_main(h_array_2);
+	s = "";
+	for (int i = 0; i < content.length(); i++)
+	{
+		s.push_back(content[i]);
+		for (int j = 0; j < 26; j++)
+		{
+			if (s == h_array_2[j].c)
+			{
+				huffman = huffman + h_array_2[j].h;
+				break;
+			}
+		}
+		s.pop_back();
+	}
+	int huffman_size_2 = 0;
+	while (!huffman.empty())
+	{
+		huffman.pop_back();
+		huffman_size_2++;
+	}
+
+	//----------------------------Entropy--------------------------------------------//
+	double entropy = 0;
+	double entropy_2 = 0;
+	double temp_sum = 0;
+	double temp_sum_2 = 0;
+	for (int i = 0; i < 26; i++)
+	{
+		temp_sum = temp_sum + f_array[i];
+		temp_sum_2 = temp_sum_2 + f_array_2[i];
+	}
+	for (int i = 0; i < 26; i++)
+	{
+		entropy += (f_array[i] / temp_sum * log2(f_array[i] / temp_sum));
+		entropy_2 += (f_array_2[i] / temp_sum_2 * log2(f_array_2[i] / temp_sum_2));
+
+	}
+	entropy = entropy * -1;
+	entropy_2 = entropy_2 * -1;
+
+	//----------------------------------------------------------------------------------//
+
+
+	cout << "---------------------------------------Using the english character freqency set-----------------------------------------" << endl;
+	cout << "Sum of frequencies: " << temp_sum << endl;
 	Average_Calc(h_array);
+	cout << "The bit sequence length is:" << huffman_size<< endl;
+	cout << "Entropy is: " << entropy << endl;
+	cout << "-------------------------------------------Using the File character freqency set----------------------------------------" << endl;
+	cout << "Sum of frequencies: " << temp_sum_2 << endl;
+	cout << "The bit sequence length is:" << huffman_size_2 << endl;
 	Average_Calc(h_array_2);
+	cout << "Entropy is: " << entropy_2 << endl;
+
 }
